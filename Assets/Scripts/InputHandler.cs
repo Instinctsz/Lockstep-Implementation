@@ -46,7 +46,7 @@ public class InputHandler : MonoBehaviour
         {
             Unit unit = hit.transform.GetComponent<Unit>();
 
-            if (unit.Team != PlayerManager.Instance.PlayerTeam)
+            if (unit.Team != PlayerManager.PlayerTeam)
             {
                 AttackCommand.Invoke(unit);
             }

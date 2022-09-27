@@ -2,12 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Team
-{
-    RED,
-    BLUE,
-    YELLOW
-}
+
 
 [RequireComponent(typeof(Movement))]
 public class Unit : MonoBehaviour
@@ -19,10 +14,13 @@ public class Unit : MonoBehaviour
 
     private Movement movementHandler;
 
+    private float nextActionTime = 0.0f;
+    private float period = 0.1f;
+
     // Start is called before the first frame update
     void Start()
     {
-        if (Team == PlayerManager.Instance.PlayerTeam)
+        if (Team == PlayerManager.PlayerTeam)
         {
             InputHandler.Instance.MovementCommand += OnMovementCommand;
             InputHandler.Instance.AttackCommand += OnAttackCommand;
@@ -33,7 +31,10 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Team == PlayerManager.PlayerTeam)
+        {
+             NakamaTest.Instance.SendPositionUpdate(transform.position);    
+        }
     }
 
     void OnMovementCommand(Vector3 pos)
