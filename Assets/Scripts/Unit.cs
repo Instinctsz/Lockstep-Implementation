@@ -12,57 +12,44 @@ public class Unit : MonoBehaviour
     public int AttackRange;
     public Team Team;
 
-    private Movement movementHandler;
+    [HideInInspector] 
+    public string guid;
 
-    private float nextActionTime = 0.0f;
-    private float period = 0.1f;
+    private Movement movementHandler;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (Team == PlayerManager.PlayerTeam)
-        {
-            InputHandler.Instance.MovementCommand += OnMovementCommand;
-            InputHandler.Instance.AttackCommand += OnAttackCommand;
-            movementHandler = GetComponent<Movement>();
-        }
+        movementHandler = GetComponent<Movement>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Team == PlayerManager.PlayerTeam)
-        {
-             NakamaTest.Instance.SendPositionUpdate(transform.position);    
-        }
+        
     }
 
-    void OnMovementCommand(Vector3 pos)
+    public void Attack(Unit unit)
     {
-        MoveTo(pos);
-    }
-
-    void OnAttackCommand(Unit unit)
-    {
-        movementHandler.OnArrivedTarget -= Attack;
+        movementHandler.OnArrivedTarget -= DealDamage;
 
         if (Vector3.Distance(unit.transform.position, transform.position) > AttackRange)
         {
             movementHandler.MoveTo(unit, AttackRange);
-            movementHandler.OnArrivedTarget += Attack;
+            movementHandler.OnArrivedTarget += DealDamage;
         }
         else
         {
-            Attack(unit);
+            DealDamage(unit);
         }
     }
 
-    void Attack(Unit unit)
+    void DealDamage(Unit unit)
     {
         unit.TakeDamage(AttackPower);
     } 
 
-    void MoveTo(Vector3 pos)
+    public void MoveTo(Vector3 pos)
     {
         pos.y += 2;
         movementHandler.MoveTo(pos);
@@ -83,7 +70,6 @@ public class Unit : MonoBehaviour
 
     private void OnDestroy()
     {
-        InputHandler.Instance.MovementCommand -= OnMovementCommand;
-        InputHandler.Instance.AttackCommand -= Attack;
+
     }
 }

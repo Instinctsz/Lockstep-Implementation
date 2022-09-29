@@ -6,13 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nakama.TinyJson;
 
-[Serializable]
-public class PositionState
-{
-    public float X;
-    public float Y;
-    public float Z;
-}
+
+
 
 
 public class NakamaTest : MonoBehaviour
@@ -38,42 +33,20 @@ public class NakamaTest : MonoBehaviour
         var client = new Client("http", "127.0.0.1", 7350, "defaultkey");
         client.Timeout = 10;
 
-        //var logger = new UnityLogger();
-        //client.Logger = logger;
-
         socket = Socket.From(client);
 
         socket.ReceivedMatchPresence += ReceivedMatchPresence;
         socket.ReceivedMatchState += ReceivedMatchState;
 
-
         var session = await client.AuthenticateDeviceAsync(SystemInfo.deviceUniqueIdentifier);
-
 
         bool appearOnline = true;
         int connectionTimeout = 30;
         await socket.ConnectAsync(session, appearOnline, connectionTimeout);
     }
 
-    public async void FindMatch()
-    {
-        var matchName = "Amogus";
-
-        // When joining by match name, you use the CreateMatchAsync function instead of the JoinMatchAsync function
-        match = await socket.CreateMatchAsync(matchName);
-
-        foreach (var user in match.Presences)
-        {
-            Debug.Log("Connected user: " + user.SessionId);
-            usersInMatch.Add(user);
-        }
-
-        usersInMatch.Add(match.Self);
-    }
-
     public async void StartMatchClicked()
     {
-        StartMatch();
         await socket.SendMatchStateAsync(match.Id, Opcodes.Start_Match, "", usersInMatch);
 
         foreach (var user in match.Presences)
@@ -82,38 +55,7 @@ public class NakamaTest : MonoBehaviour
         }
     }
 
-    public void StartMatch()
-    {
-        int i = 0;
-        HideUIOnStartMatch.SetActive(false);
-
-        foreach (var presence in usersInMatch)
-        {
-            Team team = (Team)i;
-            Player player = new Player(presence, team);
-
-            DebugText.Instance.Add(i.ToString());
-            DebugText.Instance.Add(presence.SessionId);
-            if (presence.Equals(match.Self))
-            {
-                Debug.Log("You are team " + team);
-                PlayerManager.PlayerTeam = team;
-                DebugText.Instance.Add("You are team " + team);
-                DebugText.Instance.Add(presence.SessionId);
-            }
-
-            var go = Instantiate(prefab);
-            go.name = "Unit " + i;
-            go.transform.position = spawnpoints.transform.GetChild(i).transform.position;
-            DebugText.Instance.Add("Set the position");
-
-            Unit unit = go.GetComponent<Unit>();
-            unit.Team = team;
-
-            players.Add(presence.SessionId, go);
-            i++;
-        }
-    }
+    
 
     public void ReceivedMatchPresence(IMatchPresenceEvent presenceEvent)
     {
@@ -136,6 +78,7 @@ public class NakamaTest : MonoBehaviour
 
     public void ReceivedMatchState(IMatchState newState)
     {
+  
         var enc = System.Text.Encoding.UTF8;
 
         var content = enc.GetString(newState.State);
@@ -143,7 +86,8 @@ public class NakamaTest : MonoBehaviour
         switch (newState.OpCode)
         {
             case Opcodes.Start_Match:
-                StartMatch();
+                Debug.Log("Received start match packet");
+                //StartMatch();
                 break;
             case Opcodes.Position:
                 HandlePositionUpdate(newState);
@@ -156,31 +100,11 @@ public class NakamaTest : MonoBehaviour
 
     void HandlePositionUpdate(IMatchState newState) {
 
-        //Player player = FindPlayerByPresence(newState.UserPresence);
         GameObject unit = players[newState.UserPresence.SessionId];
-
-        if (unit == null)
-        {
-            Debug.LogError("NO UNIT FOUND");
-        }
 
         var stateJson = Encoding.UTF8.GetString(newState.State);
         var positionState = JsonParser.FromJson<PositionState>(stateJson);
         Vector3 newPosition = new Vector3(positionState.X, positionState.Y, positionState.Z);
-
-        Debug.Log("Received: " + newPosition.ToString());
-
-        try
-        {
-            //Debug.Log(unit.name);
-        }
-        catch(Exception e)
-        {
-            Debug.Log("test");
-            Debug.LogError(e);
-        }
-
-        Debug.Log("lol");
 
         mainThreadCalls.Enqueue(() =>
         {
@@ -190,14 +114,9 @@ public class NakamaTest : MonoBehaviour
     }
 
     public async void SendPositionUpdate(Vector3 position) {
-        var state = new PositionState
-        {
-            X = position.x,
-            Y = position.y,
-            Z = position.z
-        };
+        PositionState state = new PositionState(position);
 
-        await socket.SendMatchStateAsync(match.Id, Opcodes.Position, JsonWriter.ToJson(state));
+        await socket.SendMatchStateAsync(match.Id, Opcodes.Position, state.Serialize());
     }
 
     public void Update()
@@ -208,16 +127,6 @@ public class NakamaTest : MonoBehaviour
             action();
         }
     }
-
-    //Player FindPlayerByPresence(IUserPresence presence) {
-    //    foreach(String player in players.Keys) 
-    //    {
-    //        if (player.presence.Equals(presence))
-    //            return player;
-    //    }
-
-    //    return null;
-    //}
 
     private void OnDestroy()
     {

@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class InputHandler : MonoBehaviour
 {
-    public event Action<Vector3> MovementCommand = delegate { };
-    public event Action<Unit> AttackCommand = delegate { };
+    public static event Action<Vector3> MovementCommand = delegate { };
+    public static event Action<Unit> AttackCommand = delegate { };
     public static InputHandler Instance;
     private Camera cam;
 
@@ -27,7 +27,6 @@ public class InputHandler : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit))
                 HandleRightClick(hit);
         }
-
     }
 
     void HandleRightClick(RaycastHit hit)
