@@ -58,3 +58,10 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+node_modules
+build
+npm-debug.log
+.nyc
+.env
+.DS_Store
+
