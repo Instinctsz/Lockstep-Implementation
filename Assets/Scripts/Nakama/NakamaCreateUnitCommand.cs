@@ -21,6 +21,8 @@ public class NakamaCreateUnitCommand : MonoBehaviour
         CreateUnitState createUnitState = new CreateUnitState(guid.ToString(), position, team);
         string matchId = NakamaMatchHandler.Match.Id;
 
+        Debug.Log("Sending Create Unit Packet: " + createUnitState.Serialize());
+
         await NakamaConnection.ClientSocket.SendMatchStateAsync(matchId, Opcodes.Create_Unit, createUnitState.Serialize(), NakamaMatchHandler.UsersInMatch);
     }
 
@@ -39,6 +41,9 @@ public class NakamaCreateUnitCommand : MonoBehaviour
             Unit unit = go.GetComponent<Unit>();
             unit.Team = (Team)createUnitState.Team;
             unit.guid = createUnitState.GUID;
+
+            Debug.Log("Received Create Unit Packet: " + createUnitState.Serialize());
+            Debug.Log("====================================");
 
             NakamaMatchHandler.Players.Add(newState.UserPresence.SessionId, go);
             UnitCreated.Invoke(unit);

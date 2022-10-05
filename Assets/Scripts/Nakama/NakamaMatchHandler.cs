@@ -60,7 +60,6 @@ public class NakamaMatchHandler : MonoBehaviour
 
     public void ReceivedMatchState(IMatchState newState)
     {
-        Debug.Log("Received match state with opcode: " + newState.OpCode);
         if (newState.OpCode == Opcodes.Start_Match)
             MatchStart.Invoke(newState);
     }

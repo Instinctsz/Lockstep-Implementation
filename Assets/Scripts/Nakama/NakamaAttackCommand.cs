@@ -16,6 +16,8 @@ public class NakamaAttackCommand : MonoBehaviour
         AttackState attackState = new AttackState(unitToAttack);
         string matchId = NakamaMatchHandler.Match.Id;
 
+        Debug.Log("Sending Attack Packet: " + attackState.Serialize());
+
         await NakamaConnection.ClientSocket.SendMatchStateAsync(matchId, Opcodes.Attack, attackState.Serialize(), NakamaMatchHandler.UsersInMatch);
     }
 
@@ -28,6 +30,9 @@ public class NakamaAttackCommand : MonoBehaviour
         {
             Unit unitToAttack = AttackState.Deserialize(newState.State);
             GameObject attacker = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
+
+            Debug.Log("Received Attack Packet, unit to attack: " + unitToAttack.guid);
+            Debug.Log("====================================");
 
             Unit attackerUnit = attacker.GetComponent<Unit>();
             attackerUnit.Attack(unitToAttack);

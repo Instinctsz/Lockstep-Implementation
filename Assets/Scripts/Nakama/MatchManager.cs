@@ -13,7 +13,6 @@ public class MatchManager : MonoBehaviour
 
     void OnUnitCreated(Unit unit)
     {
-        Debug.Log("Adding unit with guid: " + unit.guid);
         Units.Add(unit.guid, unit);
     }
 }

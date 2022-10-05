@@ -18,6 +18,8 @@ public class NakamaMoveCommand : MonoBehaviour
         PositionState positionState = new PositionState(position);
         string matchId = NakamaMatchHandler.Match.Id;
 
+        Debug.Log("Sending Move Packet: " + positionState.Serialize());
+
         await NakamaConnection.ClientSocket.SendMatchStateAsync(matchId, Opcodes.Position, positionState.Serialize(), NakamaMatchHandler.UsersInMatch);
     }
 
@@ -30,6 +32,9 @@ public class NakamaMoveCommand : MonoBehaviour
         {
             Vector3 positionToMoveTo = PositionState.Deserialize(newState.State);
             GameObject unitGo = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
+
+            Debug.Log("Received Move Packet: " + positionToMoveTo + ", for player: " + newState.UserPresence.SessionId);
+            Debug.Log("====================================");
 
             Unit unit = unitGo.GetComponent<Unit>();
             unit.MoveTo(positionToMoveTo);
