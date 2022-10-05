@@ -3,13 +3,14 @@ const matchInit: nkruntime.MatchInitFunction<nkruntime.MatchState> = function(ct
     logger.debug('Match initialized.');
     return {
             state: { },
-            tickRate: 1,
+            tickRate: 10,
             label: ''
     };
 };
 
 // When a player tries to join
 const matchJoinAttempt: nkruntime.MatchJoinAttemptFunction<nkruntime.MatchState> = function(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence, metadata : {[key : string]: any}) : {state: nkruntime.MatchState, accept: boolean } | null {        
+    logger.debug('Player tries to join!');
     return {
         state,
         accept: true
@@ -18,6 +19,7 @@ const matchJoinAttempt: nkruntime.MatchJoinAttemptFunction<nkruntime.MatchState>
 
 // When one (or multiple) player(s) actually join(s)
 const matchJoin: nkruntime.MatchJoinFunction<nkruntime.MatchState> = function(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]) : {state: nkruntime.MatchState} | null {
+    logger.debug("Player joined");
     return {state};
 };
 

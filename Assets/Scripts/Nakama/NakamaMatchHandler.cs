@@ -1,7 +1,9 @@
 using Nakama;
+using Nakama.TinyJson;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class NakamaMatchHandler : MonoBehaviour
@@ -19,6 +21,27 @@ public class NakamaMatchHandler : MonoBehaviour
     {
         NakamaConnection.ClientSocket.ReceivedMatchPresence += ReceivedMatchPresence;
         NakamaConnection.ClientSocket.ReceivedMatchState += ReceivedMatchState;
+    }
+
+    public async void CreateMatch()
+    {
+        Dictionary<string, string> payload = new Dictionary<string, string>();
+        payload.Add("MatchName", defaultMatchName);
+
+        IApiRpc response = await NakamaConnection.Client.RpcAsync(NakamaConnection.Session, "CreateMatch", JsonWriter.ToJson(payload));
+        Dictionary<string, string> positionState = JsonParser.FromJson<Dictionary<string, string>>(response.Payload);
+        string matchId = positionState["matchId"];
+        Debug.Log(matchId);
+
+        Match = await NakamaConnection.ClientSocket.JoinMatchAsync(matchId);
+
+        foreach (var user in Match.Presences)
+        {
+            UsersInMatch.Add(user);
+        }
+
+        UsersInMatch.Add(Match.Self);
+
     }
 
     public async void FindMatch()
