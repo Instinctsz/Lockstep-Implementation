@@ -11,4 +11,6 @@ public class Opcodes
     public const long Attack = 3;
 
     public const long Create_Unit = 4;
+
+    public const long Turn_Timer_Tick = 5;
 }

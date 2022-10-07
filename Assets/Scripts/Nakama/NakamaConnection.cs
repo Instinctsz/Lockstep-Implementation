@@ -23,4 +23,9 @@ public class NakamaConnection : MonoBehaviour
     
         await ClientSocket.ConnectAsync(Session, appearOnline, connectionTimeout);
     }
+
+    async void OnDestroy()
+    {
+        await ClientSocket.CloseAsync();
+    }
 }

@@ -29,9 +29,10 @@ public class NakamaMatchHandler : MonoBehaviour
         payload.Add("MatchName", defaultMatchName);
 
         IApiRpc response = await NakamaConnection.Client.RpcAsync(NakamaConnection.Session, "CreateMatch", JsonWriter.ToJson(payload));
-        Dictionary<string, string> positionState = JsonParser.FromJson<Dictionary<string, string>>(response.Payload);
-        string matchId = positionState["matchId"];
-        Debug.Log(matchId);
+        Dictionary<string, string> responseParsed = JsonParser.FromJson<Dictionary<string, string>>(response.Payload);
+        string matchId = responseParsed["matchId"];
+
+        Debug.Log("Created match with id: " + matchId);
 
         Match = await NakamaConnection.ClientSocket.JoinMatchAsync(matchId);
 
@@ -44,10 +45,18 @@ public class NakamaMatchHandler : MonoBehaviour
 
     }
 
-    public async void FindMatch()
+    public async void JoinMatch()
     {
-        Debug.Log("Finding Match...");
-        Match = await NakamaConnection.ClientSocket.CreateMatchAsync(defaultMatchName);
+        Dictionary<string, string> payload = new Dictionary<string, string>();
+        payload.Add("MatchName", defaultMatchName);
+
+        IApiRpc response = await NakamaConnection.Client.RpcAsync(NakamaConnection.Session, "GetMatchByName", JsonWriter.ToJson(payload));
+        Dictionary<string, string> responseParsed = JsonParser.FromJson<Dictionary<string, string>>(response.Payload);
+        string matchId = responseParsed["matchId"];
+
+        Debug.Log("Joined match with id: " + matchId);
+
+        Match = await NakamaConnection.ClientSocket.JoinMatchAsync(matchId);
 
         foreach (var user in Match.Presences)
         {
@@ -56,10 +65,9 @@ public class NakamaMatchHandler : MonoBehaviour
 
         UsersInMatch.Add(Match.Self);
     }
-
     public async void SendStartMatchPacket()
     {
-        await NakamaConnection.ClientSocket.SendMatchStateAsync(Match.Id, Opcodes.Start_Match, "", UsersInMatch);
+        await NakamaConnection.ClientSocket.SendMatchStateAsync(Match.Id, Opcodes.Start_Match, "1", UsersInMatch);
     }
 
     // Updating list of players
@@ -85,5 +93,10 @@ public class NakamaMatchHandler : MonoBehaviour
     {
         if (newState.OpCode == Opcodes.Start_Match)
             MatchStart.Invoke(newState);
+    }
+
+    public void OnDestroy()
+    {
+      
     }
 }

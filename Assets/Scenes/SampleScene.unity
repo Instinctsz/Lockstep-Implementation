@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -267,6 +267,7 @@ GameObject:
   - component: {fileID: 186670258}
   - component: {fileID: 186670262}
   - component: {fileID: 186670263}
+  - component: {fileID: 186670264}
   m_Layer: 0
   m_Name: Nakama
   m_TagString: Untagged
@@ -353,6 +354,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22f9912413c000345ba82aa709998421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &186670264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186670257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e26245a67ded66b4599e8ee176f3b171, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &289749582
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,9 +436,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'StartMatch
-
-'
+  m_Text: Start Match
 --- !u!222 &289749585
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1299,7 +1310,7 @@ GameObject:
   - component: {fileID: 1523502390}
   - component: {fileID: 1523502389}
   m_Layer: 5
-  m_Name: Find match
+  m_Name: Join Match
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1371,7 +1382,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 186670259}
         m_TargetAssemblyTypeName: NakamaMatchHandler, Assembly-CSharp
-        m_MethodName: FindMatch
+        m_MethodName: JoinMatch
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1779,7 +1790,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Find Match
+  m_Text: Join Match
 --- !u!222 &1903383451
 CanvasRenderer:
   m_ObjectHideFlags: 0
