@@ -1,11 +1,11 @@
-const tickDelay = 3; // 300ms
+const tickDelay = 1; // 50ms
 
 // Match initialization function (runs once when the match is created either via rpc or through the matchmaker)
 const matchInit: nkruntime.MatchInitFunction<nkruntime.MatchState> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
     logger.debug('Match initialized.');
     return {
         state: {},
-        tickRate: 10,
+        tickRate: 20,
         label: ''
     };
 };
