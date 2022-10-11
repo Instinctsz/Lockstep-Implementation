@@ -41,6 +41,8 @@ public class NakamaCreateUnitCommand : MonoBehaviour
             Unit unit = go.GetComponent<Unit>();
             unit.Team = (Team)createUnitState.Team;
             unit.guid = createUnitState.GUID;
+            unit.GetComponentInChildren<UnitUI>().SetName(NakamaMatchHandler.FindUserBySession(newState.UserPresence.SessionId).Username);
+
 
             Debug.Log("Received Create Unit Packet: " + createUnitState.Serialize());
             Debug.Log("====================================");

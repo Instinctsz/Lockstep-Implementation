@@ -22,6 +22,5 @@ public class NakamaTurnHandler : MonoBehaviour
         string stateJson = Encoding.UTF8.GetString(matchState.State);
         int currentTick = Int32.Parse(stateJson);
         NakamaServerManager.CurrentTick = currentTick;
-        Debug.Log("Current tick: " + currentTick);
     }   
 }

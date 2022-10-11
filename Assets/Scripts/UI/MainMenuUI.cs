@@ -8,6 +8,7 @@ using System.Globalization;
 public class MainMenuUI : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI InviteLink;
+    [SerializeField] TextMeshProUGUI Username;
     [SerializeField] GameObject[] ObjectsToEnable;
     [SerializeField] GameObject[] ObjectsToDisable;
 
@@ -27,25 +28,26 @@ public class MainMenuUI : MonoBehaviour
 
     public void Connect()
     {
+        if (InviteLink.text.Length <= 1)
+        {
+            con.Connect("127.0.0.1", 7350, Username.text);
+            return;
+        }
+
         string[] split = InviteLink.text.Split(':');
         string url = split[0];
         string portString = split[1].Substring(0, 5);
         int port = Int32.Parse(portString);
 
-        Debug.Log("Here0");
-        con.Connect(url, port);
+        con.Connect(url, port, Username.text);
     }
 
     private void OnConnect()
     {
-        Debug.Log("Here4");
         MainThread.Enqueue(() =>
         {
             foreach (GameObject gameObject in ObjectsToEnable)
-            {
-                Debug.Log("enabling :" + gameObject.name);
                 gameObject.SetActive(true);
-            }
 
             foreach (GameObject gameObject in ObjectsToDisable)
                 gameObject.SetActive(false);

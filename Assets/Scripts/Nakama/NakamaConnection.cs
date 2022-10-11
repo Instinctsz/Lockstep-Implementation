@@ -19,16 +19,18 @@ public class NakamaConnection : MonoBehaviour
 
     async void OnDestroy()
     {
-        await ClientSocket.CloseAsync();
+        if (ClientSocket != null)
+            await ClientSocket.CloseAsync();
     }
 
-    public async void Connect(string host, int port)
+    public async void Connect(string host, int port, string username = null)
     {
         Client = new Client("http", host, port, "defaultkey");
         Client.Timeout = 10;
+        Guid g = Guid.NewGuid();
 
         ClientSocket = Socket.From(Client);
-        Session = await Client.AuthenticateDeviceAsync(SystemInfo.deviceUniqueIdentifier);
+        Session = await Client.AuthenticateDeviceAsync(SystemInfo.deviceUniqueIdentifier, username);
         ClientSocket.Connected += SocketConnected;
 
         await ClientSocket.ConnectAsync(Session, true, 30);

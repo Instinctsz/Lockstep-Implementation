@@ -33,7 +33,7 @@ public class NakamaMoveCommand : MonoBehaviour
             Vector3 positionToMoveTo = PositionState.Deserialize(newState.State);
             GameObject unitGo = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
 
-            Debug.Log("Received Move Packet: " + positionToMoveTo + ", for player: " + newState.UserPresence.SessionId);
+            Debug.Log("Received Move Packet: " + positionToMoveTo + ", for player: " + newState.UserPresence.Username);
             Debug.Log("====================================");
 
             Unit unit = unitGo.GetComponent<Unit>();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,17 +11,20 @@ public class Unit : MonoBehaviour
     public int Hp;
     public int AttackPower;
     public int AttackRange;
-    public Team Team;
-
-    [HideInInspector] 
-    public string guid;
+    public Team Team; 
+   
+    [HideInInspector] public int MaxHealth;
+    [HideInInspector] public string guid;
 
     private Movement movementHandler;
+
+    public event Action<int> HealthChanged = delegate { };
 
     // Start is called before the first frame update
     void Start()
     {
         movementHandler = GetComponent<Movement>();
+        MaxHealth = Hp;
     }
 
     // Update is called once per frame
@@ -58,6 +62,8 @@ public class Unit : MonoBehaviour
     void TakeDamage(int amount)
     {
         Hp -= amount;
+
+        HealthChanged.Invoke(Hp);
 
         if (Hp <= 0)
             Die();

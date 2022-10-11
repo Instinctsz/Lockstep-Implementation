@@ -5,11 +5,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using System.Linq;
 
 public class NakamaMatchHandler : MonoBehaviour
 {
     public static IMatch Match;
     public static event Action<IMatchState> MatchStart = delegate { };
+    public static event Action<IMatch> MatchJoined = delegate { };
+    public static event Action<IUserPresence> MatchPlayerJoined = delegate { };
+    public static event Action<IUserPresence> MatchPlayerLeft = delegate { };
 
     public static Dictionary<string, GameObject> Players = new Dictionary<string, GameObject>();
     public static List<IUserPresence> UsersInMatch = new List<IUserPresence>();
@@ -42,7 +46,7 @@ public class NakamaMatchHandler : MonoBehaviour
         }
 
         UsersInMatch.Add(Match.Self);
-
+        MatchJoined.Invoke(Match);
     }
 
     public async void JoinMatch()
@@ -64,6 +68,7 @@ public class NakamaMatchHandler : MonoBehaviour
         }
 
         UsersInMatch.Add(Match.Self);
+        MatchJoined.Invoke(Match);
     }
     public async void SendStartMatchPacket()
     {
@@ -77,6 +82,7 @@ public class NakamaMatchHandler : MonoBehaviour
         {
             Debug.Log("Player left");
             UsersInMatch.Remove(presence);
+            MatchPlayerLeft.Invoke(presence);
         }
 
         foreach (var presence in presenceEvent.Joins)
@@ -85,6 +91,7 @@ public class NakamaMatchHandler : MonoBehaviour
             {
                 Debug.Log("Player joined");
                 UsersInMatch.Add(presence);
+                MatchPlayerJoined.Invoke(presence);
             }
         }
     }
@@ -93,6 +100,11 @@ public class NakamaMatchHandler : MonoBehaviour
     {
         if (newState.OpCode == Opcodes.Start_Match)
             MatchStart.Invoke(newState);
+    }
+
+    public static IUserPresence FindUserBySession(string sessionId)
+    {
+        return UsersInMatch.Find(user => user.SessionId == sessionId);
     }
 
     public void OnDestroy()

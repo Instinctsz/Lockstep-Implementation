@@ -22,6 +22,7 @@ const matchJoinAttempt: nkruntime.MatchJoinAttemptFunction<nkruntime.MatchState>
 // When one (or multiple) player(s) actually join(s)
 const matchJoin: nkruntime.MatchJoinFunction<nkruntime.MatchState> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     logger.debug("Player joined");
+    logger.debug(presences[0].username);
     return { state };
 };
 
@@ -30,6 +31,7 @@ const matchLeave: nkruntime.MatchLeaveFunction<nkruntime.MatchState> = function 
     logger.debug("Match leave, deleting collections");
     deleteCollection("turnQueue", nk, logger);
     deleteCollection("matches", nk, logger);
+
     return null;
     return { state };
 };
@@ -52,6 +54,7 @@ const matchLoop: nkruntime.MatchLoopFunction<nkruntime.MatchState> = function (c
     for (const result of results) {
         for (const packet of result.value.packets) {
             dispatcher.broadcastMessage(packet.opCode, packet.data, null, packet.sender);
+            logger.debug("Sending packet which is from " + packet.sender.username);
         }
     }
 
