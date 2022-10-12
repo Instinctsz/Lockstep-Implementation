@@ -7,7 +7,7 @@ using Nakama.TinyJson;
 using System.Text;
 
 [Serializable]
-public class PositionState : IStates
+public class PositionState : State
 {
     public float X;
     public float Y;
@@ -20,7 +20,7 @@ public class PositionState : IStates
         Z = position.z;
     }
 
-    public string Serialize()
+    public override string Serialize()
     {
         return JsonWriter.ToJson(this);
     }

@@ -1,11 +1,9 @@
-const tickDelay = 1; // 50ms
-
 // Match initialization function (runs once when the match is created either via rpc or through the matchmaker)
 const matchInit: nkruntime.MatchInitFunction<nkruntime.MatchState> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
     logger.debug('Match initialized.');
     return {
         state: {},
-        tickRate: 20,
+        tickRate: 10,
         label: ''
     };
 };
@@ -29,7 +27,6 @@ const matchJoin: nkruntime.MatchJoinFunction<nkruntime.MatchState> = function (c
 // When a player leaves
 const matchLeave: nkruntime.MatchLeaveFunction<nkruntime.MatchState> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     logger.debug("Match leave, deleting collections");
-    deleteCollection("turnQueue", nk, logger);
     deleteCollection("matches", nk, logger);
 
     return null;
@@ -42,7 +39,7 @@ const matchLoop: nkruntime.MatchLoopFunction<nkruntime.MatchState> = function (c
     dispatcher.broadcastMessage(opCodes.Turn_Timer_Tick, nk.stringToBinary(currentTick), null);
 
     //Handle queueing current tick
-    let readRequest: nkruntime.StorageReadRequest[] = [{ collection: 'turnQueue', key: tick.toString(), userId: systemId }];
+    let readRequest: nkruntime.StorageReadRequest[] = [{ collection: ctx.matchId, key: tick.toString(), userId: systemId }];
     let results: nkruntime.StorageObject[] = [];
 
     try {
@@ -63,18 +60,29 @@ const matchLoop: nkruntime.MatchLoopFunction<nkruntime.MatchState> = function (c
 
     // Handle queueing messages to future tick
     let writeRequestData = [];
-    let tickToQueueTo = tick + tickDelay;
+    let tickToQueueTo = tick + 1;
 
     for (const message of messages) {
         let dataString = "";
+        
         if (message.data.byteLength > 0)
             dataString = nk.binaryToString(message.data);
+
+        let parsedData = JSON.parse(dataString);
+        tickToQueueTo = parseInt(parsedData.TickToQueueTo);
+        
+        if (isNaN(tickToQueueTo))
+            tickToQueueTo = tick + 1;
+        
+        if (tickToQueueTo <= tick) {
+            logger.error("PACKET ARRIVED FOR TICK: " + tickToQueueTo + ", BUT ITS TICK: " + tick);
+        }
 
         let value = { opCode: message.opCode, sender: message.sender, data: dataString }
         writeRequestData.push(value);
     }
 
-    let messagesToBeQueued: nkruntime.StorageWriteRequest[] = [{ collection: 'turnQueue', key: tickToQueueTo.toString(), userId: systemId, value: { packets: writeRequestData } }];
+    let messagesToBeQueued: nkruntime.StorageWriteRequest[] = [{ collection: ctx.matchId, key: tickToQueueTo.toString(), userId: systemId, value: { packets: writeRequestData } }];
 
     try {
         nk.storageWrite(messagesToBeQueued);
@@ -88,9 +96,6 @@ const matchLoop: nkruntime.MatchLoopFunction<nkruntime.MatchState> = function (c
 
 // Runs when the match gets terminated
 const matchTerminate: nkruntime.MatchTerminateFunction<nkruntime.MatchState> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, graceSeconds: number): { state: nkruntime.MatchState } | null {
-
-
-
     return { state };
 };
 

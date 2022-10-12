@@ -26,7 +26,7 @@ public class UnitUI : MonoBehaviour
 
     void UpdateHpBar(int currentHealth)
     {
-        hpBar.fillAmount = currentHealth / unit.MaxHealth;
+        hpBar.fillAmount = (float)currentHealth / unit.MaxHealth;
     }
 
     public void SetName(string name)
