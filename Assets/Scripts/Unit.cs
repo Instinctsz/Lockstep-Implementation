@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour
     private Movement movementHandler;
 
     public event Action<int> HealthChanged = delegate { };
+    public event Action AttackStart = delegate { };
 
     // Start is called before the first frame update
     void Start()
@@ -50,12 +51,13 @@ public class Unit : MonoBehaviour
 
     void DealDamage(Unit unit)
     {
+        AttackStart.Invoke();
         unit.TakeDamage(AttackPower);
     } 
 
     public void MoveTo(Vector3 pos)
     {
-        pos.y += 2;
+        pos.y += 0.5f;
         movementHandler.MoveTo(pos);
     }
  
@@ -71,7 +73,7 @@ public class Unit : MonoBehaviour
 
     void Die()
     {
-        Destroy(this.gameObject);
+        Destroy(transform.parent.gameObject);
     }
 
     private void OnDestroy()

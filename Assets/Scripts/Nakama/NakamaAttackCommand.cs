@@ -34,7 +34,7 @@ public class NakamaAttackCommand : MonoBehaviour
             Debug.Log("Received Attack Packet, unit to attack: " + unitToAttack.guid);
             Debug.Log("====================================");
 
-            Unit attackerUnit = attacker.GetComponent<Unit>();
+            Unit attackerUnit = attacker.GetComponentInChildren<Unit>();
             attackerUnit.Attack(unitToAttack);
         });
     }

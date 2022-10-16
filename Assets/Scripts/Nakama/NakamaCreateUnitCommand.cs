@@ -38,10 +38,11 @@ public class NakamaCreateUnitCommand : MonoBehaviour
             GameObject go = Instantiate(unitPrefab);
             go.transform.position = createUnitState.GetPosition();
 
-            Unit unit = go.GetComponent<Unit>();
+            Unit unit = go.GetComponentInChildren<Unit>();
             unit.Team = (Team)createUnitState.Team;
             unit.guid = createUnitState.GUID;
-            unit.GetComponentInChildren<UnitUI>().SetName(NakamaMatchHandler.FindUserBySession(newState.UserPresence.SessionId).Username);
+            go.GetComponentInChildren<UnitUI>().SetName(NakamaMatchHandler.FindUserBySession(newState.UserPresence.SessionId).Username);
+
 
 
             Debug.Log("Received Create Unit Packet: " + createUnitState.Serialize());

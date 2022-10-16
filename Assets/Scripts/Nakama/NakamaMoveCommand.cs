@@ -36,7 +36,7 @@ public class NakamaMoveCommand : MonoBehaviour
             Debug.Log("Received Move Packet: " + positionToMoveTo + ", for player: " + newState.UserPresence.Username);
             Debug.Log("====================================");
 
-            Unit unit = unitGo.GetComponent<Unit>();
+            Unit unit = unitGo.GetComponentInChildren<Unit>();
             unit.MoveTo(positionToMoveTo);
         });
     }
