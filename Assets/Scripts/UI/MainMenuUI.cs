@@ -37,6 +37,7 @@ public class MainMenuUI : MonoBehaviour
         string urlId = InviteLink.text.Substring(0,1);
         string portString = InviteLink.text.Substring(1, InviteLink.text.Length - 2);
         Debug.Log(portString);
+        Debug.Log(urlId);
         int port = Int32.Parse(portString);
 
         con.Connect(urlId + ".tcp.eu.ngrok.io", port, Username.text);
