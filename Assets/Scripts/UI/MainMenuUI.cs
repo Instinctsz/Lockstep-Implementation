@@ -34,12 +34,12 @@ public class MainMenuUI : MonoBehaviour
             return;
         }
 
-        string[] split = InviteLink.text.Split(':');
-        string url = split[0];
-        string portString = split[1].Substring(0, 5);
+        string urlId = InviteLink.text.Substring(0,1);
+        string portString = InviteLink.text.Substring(1, InviteLink.text.Length - 2);
+        Debug.Log(portString);
         int port = Int32.Parse(portString);
 
-        con.Connect(url, port, Username.text);
+        con.Connect(urlId + ".tcp.eu.ngrok.io", port, Username.text);
     }
 
     private void OnConnect()

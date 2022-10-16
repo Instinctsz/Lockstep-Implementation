@@ -26,6 +26,7 @@ public class Unit : MonoBehaviour
     {
         movementHandler = GetComponent<Movement>();
         MaxHealth = Hp;
+        Debug.Log(MaxHealth);
     }
 
     // Update is called once per frame

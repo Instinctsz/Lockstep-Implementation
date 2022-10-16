@@ -7,7 +7,7 @@ using Nakama.TinyJson;
 using System.Text;
 
 [Serializable]
-public class CreateUnitState : IStates
+public class CreateUnitState : State
 {
     public string GUID;
     public int Team;
@@ -24,7 +24,7 @@ public class CreateUnitState : IStates
         Z = position.z;
     }
 
-    public string Serialize()
+    public override string Serialize()
     {
         return JsonWriter.ToJson(this);
     }

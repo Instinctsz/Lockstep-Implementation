@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class NakamaMatchHandler : MonoBehaviour
 {
@@ -29,15 +30,7 @@ public class NakamaMatchHandler : MonoBehaviour
 
     public async void CreateMatch()
     {
-        Dictionary<string, string> payload = new Dictionary<string, string>();
-        payload.Add("MatchName", defaultMatchName);
-
-        IApiRpc response = await NakamaConnection.Client.RpcAsync(NakamaConnection.Session, "CreateMatch", JsonWriter.ToJson(payload));
-        Dictionary<string, string> responseParsed = JsonParser.FromJson<Dictionary<string, string>>(response.Payload);
-        string matchId = responseParsed["matchId"];
-
-        Debug.Log("Created match with id: " + matchId);
-
+        string matchId = await RpcMatchCall("CreateMatch");
         Match = await NakamaConnection.ClientSocket.JoinMatchAsync(matchId);
 
         foreach (var user in Match.Presences)
@@ -51,15 +44,7 @@ public class NakamaMatchHandler : MonoBehaviour
 
     public async void JoinMatch()
     {
-        Dictionary<string, string> payload = new Dictionary<string, string>();
-        payload.Add("MatchName", defaultMatchName);
-
-        IApiRpc response = await NakamaConnection.Client.RpcAsync(NakamaConnection.Session, "GetMatchByName", JsonWriter.ToJson(payload));
-        Dictionary<string, string> responseParsed = JsonParser.FromJson<Dictionary<string, string>>(response.Payload);
-        string matchId = responseParsed["matchId"];
-
-        Debug.Log("Joined match with id: " + matchId);
-
+        string matchId = await RpcMatchCall("GetMatchByName");
         Match = await NakamaConnection.ClientSocket.JoinMatchAsync(matchId);
 
         foreach (var user in Match.Presences)
@@ -72,7 +57,7 @@ public class NakamaMatchHandler : MonoBehaviour
     }
     public async void SendStartMatchPacket()
     {
-        await NakamaConnection.ClientSocket.SendMatchStateAsync(Match.Id, Opcodes.Start_Match, "1", UsersInMatch);
+        await NakamaConnection.ClientSocket.SendMatchStateAsync(Match.Id, Opcodes.Start_Match, "{}", UsersInMatch);
     }
 
     // Updating list of players
@@ -105,6 +90,17 @@ public class NakamaMatchHandler : MonoBehaviour
     public static IUserPresence FindUserBySession(string sessionId)
     {
         return UsersInMatch.Find(user => user.SessionId == sessionId);
+    }
+
+    async Task<String> RpcMatchCall(string rpcName)
+    {
+        Dictionary<string, string> payload = new Dictionary<string, string>();
+        payload.Add("MatchName", defaultMatchName);
+
+        IApiRpc response = await NakamaConnection.Client.RpcAsync(NakamaConnection.Session, rpcName, JsonWriter.ToJson(payload));
+        Dictionary<string, string> responseParsed = JsonParser.FromJson<Dictionary<string, string>>(response.Payload);
+
+        return responseParsed["matchId"];
     }
 
     public void OnDestroy()

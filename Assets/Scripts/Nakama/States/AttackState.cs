@@ -7,7 +7,7 @@ using Nakama;
 using Nakama.TinyJson;
 
 [Serializable]
-public class AttackState : IStates
+public class AttackState : State
 {
     public string AttackedUnitGUID;
 
@@ -16,7 +16,7 @@ public class AttackState : IStates
         AttackedUnitGUID = attackedUnit.guid;
     }
 
-    public string Serialize()
+    public override string Serialize()
     {
         return JsonWriter.ToJson(this);
     }
