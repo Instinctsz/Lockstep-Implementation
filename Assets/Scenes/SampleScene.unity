@@ -927,6 +927,7 @@ GameObject:
   - component: {fileID: 186670258}
   - component: {fileID: 186670263}
   - component: {fileID: 186670264}
+  - component: {fileID: 186670260}
   m_Layer: 0
   m_Name: Nakama Scripts
   m_TagString: Untagged
@@ -960,6 +961,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultMatchName: Amogus
+--- !u!114 &186670260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186670257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c297f1a80131e574db53f06c39e0f958, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lerpDuration: 0.1
 --- !u!4 &186670261
 Transform:
   m_ObjectHideFlags: 0
@@ -2586,6 +2600,49 @@ MonoBehaviour:
   unitName: {fileID: 0}
   unit: {fileID: 0}
   heightAboveUnit: 5
+--- !u!1 &876127666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 876127668}
+  - component: {fileID: 876127667}
+  m_Layer: 0
+  m_Name: Rollback
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &876127667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876127666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f80edb816a874774a819db945a475e21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &876127668
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876127666}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &883282214
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,7 +6,8 @@ const opCodes = {
 	Position: 2,
 	Attack: 3,
 	Create_Unit: 4,
-    Turn_Timer_Tick: 5
+    Turn_Timer_Tick: 5,
+    Rollback_Request : 6
 }
 
 const InitModule: nkruntime.InitModule = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, initializer: nkruntime.Initializer) {

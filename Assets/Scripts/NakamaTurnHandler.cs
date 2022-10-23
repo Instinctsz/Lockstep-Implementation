@@ -8,6 +8,8 @@ using System;
 
 public class NakamaTurnHandler : MonoBehaviour
 {
+    public static event Action<int> TurnTicked = delegate { };
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,5 +24,6 @@ public class NakamaTurnHandler : MonoBehaviour
         string stateJson = Encoding.UTF8.GetString(matchState.State);
         int currentTick = Int32.Parse(stateJson);
         NakamaServerManager.CurrentTick = currentTick;
+        TurnTicked.Invoke(currentTick);
     }   
 }

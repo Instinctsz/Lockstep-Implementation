@@ -13,4 +13,6 @@ public class Opcodes
     public const long Create_Unit = 4;
 
     public const long Turn_Timer_Tick = 5;
+
+    public const long Rollback_Request = 6;
 }
