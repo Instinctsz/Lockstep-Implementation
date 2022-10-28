@@ -16,6 +16,7 @@ public class UnitUI : MonoBehaviour
     void Start()
     {
         unit.HealthChanged += UpdateHpBar;
+        unit.TakenDamage += UpdateHpBar;
     }
 
     // Update is called once per frame

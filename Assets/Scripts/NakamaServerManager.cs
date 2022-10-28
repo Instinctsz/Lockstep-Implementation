@@ -32,13 +32,15 @@ public class RollbackSave
     public string Guid;
     public Vector3 Position;
     public Quaternion Rotation;
-    public Action CurrentAction;
+    public State CurrentState;
+    public int Hp;
 
-    public RollbackSave(string _guid, Vector3 _position, Quaternion _rotation, Action _action = null)
+    public RollbackSave(string _guid, Vector3 _position, Quaternion _rotation, int _hp, State _state = null)
     {
         Guid = _guid;
         Position = _position;
         Rotation = _rotation;
-        CurrentAction = _action;
+        CurrentState = _state;
+        Hp = _hp;
     }
 }

@@ -35,7 +35,8 @@ public class NakamaAttackCommand : MonoBehaviour
             Debug.Log("====================================");
 
             Unit attackerUnit = attacker.GetComponentInChildren<Unit>();
-            attackerUnit.Attack(unitToAttack);
+            attackerUnit.SetState(new AttackState(unitToAttack));
+            attackerUnit.ExecuteCurrentState();
         });
     }
 }

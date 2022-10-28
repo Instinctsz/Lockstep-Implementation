@@ -18,7 +18,7 @@ public class UnitAnimations : MonoBehaviour
         unit = GetComponent<Unit>();
         animator = GetComponent<Animator>();
         unit.AttackStart += AttackStart;
-        unit.HealthChanged += TakenDamage;
+        unit.TakenDamage += TakenDamage;
     }
 
     // Update is called once per frame

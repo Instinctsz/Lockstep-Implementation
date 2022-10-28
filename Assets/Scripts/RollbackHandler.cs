@@ -30,6 +30,9 @@ public class RollbackHandler : MonoBehaviour
                 Unit unit = MatchManager.Units[save.Guid];
                 StartCoroutine(LerpPosition(unit, unit.transform.position, save.Position));
                 StartCoroutine(LerpRotation(unit, unit.transform.rotation, save.Rotation));
+                unit.ChangeHp(save.Hp);
+                unit.SetState(save.CurrentState);
+                unit.ExecuteCurrentState();
                 //MatchManager.Units[save.Guid].Action = save.CurrentAction;
             }
         });

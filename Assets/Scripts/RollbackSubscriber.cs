@@ -17,10 +17,8 @@ public class RollbackSubscriber : MonoBehaviour
     {
         MainThread.Enqueue(() =>
         {
-            RollbackSave rollbackSave = new RollbackSave(unit.guid, transform.position, transform.rotation);
+            RollbackSave rollbackSave = new RollbackSave(unit.guid, transform.position, transform.rotation, unit.Hp, unit.CurrentState);
             NakamaServerManager.AddRollbackSave(newTick, rollbackSave);
-
-            Debug.Log("Adding rollback save for tick: " + newTick);
         });
     }
 }

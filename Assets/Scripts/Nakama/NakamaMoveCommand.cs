@@ -37,7 +37,8 @@ public class NakamaMoveCommand : MonoBehaviour
             Debug.Log("====================================");
 
             Unit unit = unitGo.GetComponentInChildren<Unit>();
-            unit.MoveTo(positionToMoveTo);
+            unit.SetState(new PositionState(positionToMoveTo));
+            unit.ExecuteCurrentState();
         });
     }
 }
