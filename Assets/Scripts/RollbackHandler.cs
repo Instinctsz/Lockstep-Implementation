@@ -19,14 +19,14 @@ public class RollbackHandler : MonoBehaviour
         if (newState.OpCode != Opcodes.Rollback_Request)
             return;
 
-        string stateJson = Encoding.UTF8.GetString(newState.State);
-        int tickToRollbackTo = Int32.Parse(stateJson);
-
-        Debug.Log("Rolling back to: " + tickToRollbackTo);
-
-        List<RollbackSave> rollbackSaves = NakamaServerManager.GetRollbackSaves(tickToRollbackTo);
-
         MainThread.Enqueue(() => {
+            string stateJson = Encoding.UTF8.GetString(newState.State);
+            int tickToRollbackTo = Int32.Parse(stateJson);
+
+            Debug.Log("Rolling back to: " + tickToRollbackTo);
+
+            List<RollbackSave> rollbackSaves = NakamaServerManager.GetRollbackSaves(tickToRollbackTo);
+
             foreach (RollbackSave save in rollbackSaves)
             {
                 Unit unit = MatchManager.Units[save.Guid];
