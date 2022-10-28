@@ -74,8 +74,12 @@ const matchLoop: nkruntime.MatchLoopFunction<nkruntime.MatchState> = function (c
         if (isNaN(tickToQueueTo))
             tickToQueueTo = tick + 1;
         
+        // Rollback
         if (tickToQueueTo <= tick) {
             logger.error("PACKET ARRIVED FOR TICK: " + tickToQueueTo + ", BUT ITS TICK: " + tick);
+            dispatcher.broadcastMessage(opCodes.Rollback_Request, "", null, message.sender);
+            dispatcher.broadcastMessage(message.opCode, message.data, null, message.sender);
+            continue;
         }
 
         let value = { opCode: message.opCode, sender: message.sender, data: dataString }

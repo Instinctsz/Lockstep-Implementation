@@ -22,6 +22,8 @@ public class RollbackHandler : MonoBehaviour
         string stateJson = Encoding.UTF8.GetString(newState.State);
         int tickToRollbackTo = Int32.Parse(stateJson);
 
+        Debug.Log("Rolling back to: " + tickToRollbackTo);
+
         List<RollbackSave> rollbackSaves = NakamaServerManager.GetRollbackSaves(tickToRollbackTo);
 
         MainThread.Enqueue(() => {
