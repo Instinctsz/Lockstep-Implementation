@@ -21,4 +21,9 @@ public class RollbackSubscriber : MonoBehaviour
             NakamaServerManager.AddRollbackSave(newTick, rollbackSave);
         });
     }
+
+    private void OnDestroy()
+    {
+        NakamaTurnHandler.TurnTicked -= OnTurnTick;
+    }
 }

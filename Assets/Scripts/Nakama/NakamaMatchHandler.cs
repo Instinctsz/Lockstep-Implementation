@@ -30,7 +30,7 @@ public class NakamaMatchHandler : MonoBehaviour
 
     public async void CreateMatch()
     {
-        string matchId = await RpcMatchCall("CreateMatch");
+        string matchId = await RpcMatchCall("CreateMatch", defaultMatchName);
         Match = await NakamaConnection.ClientSocket.JoinMatchAsync(matchId);
 
         foreach (var user in Match.Presences)
@@ -44,7 +44,7 @@ public class NakamaMatchHandler : MonoBehaviour
 
     public async void JoinMatch()
     {
-        string matchId = await RpcMatchCall("GetMatchByName");
+        string matchId = await RpcMatchCall("GetMatchByName", defaultMatchName);
         Match = await NakamaConnection.ClientSocket.JoinMatchAsync(matchId);
 
         foreach (var user in Match.Presences)
@@ -92,10 +92,10 @@ public class NakamaMatchHandler : MonoBehaviour
         return UsersInMatch.Find(user => user.SessionId == sessionId);
     }
 
-    async Task<String> RpcMatchCall(string rpcName)
+    public static async Task<String> RpcMatchCall(string rpcName, string matchName)
     {
         Dictionary<string, string> payload = new Dictionary<string, string>();
-        payload.Add("MatchName", defaultMatchName);
+        payload.Add("MatchName", matchName);
 
         IApiRpc response = await NakamaConnection.Client.RpcAsync(NakamaConnection.Session, rpcName, JsonWriter.ToJson(payload));
         Dictionary<string, string> responseParsed = JsonParser.FromJson<Dictionary<string, string>>(response.Payload);

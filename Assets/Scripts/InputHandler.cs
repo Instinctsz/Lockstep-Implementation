@@ -10,6 +10,8 @@ public class InputHandler : MonoBehaviour
     public static InputHandler Instance;
     private Camera cam;
 
+    private static bool captureInput = true;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -17,9 +19,16 @@ public class InputHandler : MonoBehaviour
         Instance = this;
     }
 
+    public static void StopCapturingInput()
+    {
+        captureInput = false;
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (!captureInput) return;
+
         if (Input.GetMouseButtonDown(1))
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);

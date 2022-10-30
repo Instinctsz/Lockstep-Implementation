@@ -6,6 +6,7 @@ using Nakama;
 public class LobbyUI : MonoBehaviour
 {
     [SerializeField] GameObject nextState;
+    [SerializeField] GameObject replayState;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +16,12 @@ public class LobbyUI : MonoBehaviour
     void OnMatchJoined(IMatch match)
     {
         nextState.SetActive(true);
+        this.gameObject.SetActive(false);
+    }
+
+    public void SwitchToReplaysState()
+    {
+        replayState.SetActive(true);
         this.gameObject.SetActive(false);
     }
 

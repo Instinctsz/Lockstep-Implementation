@@ -13,6 +13,7 @@ const opCodes = {
 const InitModule: nkruntime.InitModule = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, initializer: nkruntime.Initializer) {
     initializer.registerRpc("CreateMatch", rpcCreateMatch);
     initializer.registerRpc("GetMatchByName", rpcGetMatchIdByName);
+    initializer.registerRpc("GetReplayData", rpcGetReplayData);
 
     initializer.registerMatch(defaultMatchName, {
         matchInit,
@@ -29,6 +30,7 @@ const InitModule: nkruntime.InitModule = function (ctx: nkruntime.Context, logge
 
 function rpcCreateMatch(context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
     const matchId = nk.matchCreate(defaultMatchName, { payload });
+    logger.info("Created match.");
 
     const jsonPayload = JSON.parse(payload.toString());
 
@@ -59,10 +61,28 @@ function rpcGetMatchIdByName(context: nkruntime.Context, logger: nkruntime.Logge
         results = nk.storageRead(readRequest);
         logger.debug("Reading name: " + matchNamePayload)
     } catch (error) {
-        console.error(error);
+        logger.error(error);
     }
 
     const matchId = results[0].value.matchId;
 
     return JSON.stringify({ matchId });
+}
+
+function rpcGetReplayData(context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
+    const jsonPayload = JSON.parse(payload.toString());
+
+    const matchIdPayload = jsonPayload["matchId"];
+
+    let result: nkruntime.StorageObjectList = {};
+
+    try {
+        result = nk.storageList(systemId, matchIdPayload, 10000);
+    } catch (error) {
+        logger.error("ERROR AT GETTING REPLAY DATA");
+    }
+
+    let objects = result.objects;
+
+    return JSON.stringify({ objects });
 }

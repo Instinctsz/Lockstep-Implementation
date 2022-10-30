@@ -23,7 +23,7 @@ public class NakamaMoveCommand : MonoBehaviour
         await NakamaConnection.ClientSocket.SendMatchStateAsync(matchId, Opcodes.Position, positionState.Serialize(), NakamaMatchHandler.UsersInMatch);
     }
 
-    void HandleMoveCommand(IMatchState newState)
+    public void HandleMoveCommand(IMatchState newState)
     {
         if (newState.OpCode != Opcodes.Position)
             return;
@@ -31,6 +31,7 @@ public class NakamaMoveCommand : MonoBehaviour
         MainThread.Enqueue(() =>
         {
             Vector3 positionToMoveTo = PositionState.Deserialize(newState.State);
+            Debug.Log("reading from player: " + newState.UserPresence.SessionId);
             GameObject unitGo = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
 
             Debug.Log("Received Move Packet: " + positionToMoveTo + ", for player: " + newState.UserPresence.Username);

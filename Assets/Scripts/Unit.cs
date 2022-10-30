@@ -95,16 +95,14 @@ public class Unit : MonoBehaviour
 
     void Die()
     {
+        if (Team == PlayerManager.PlayerTeam)
+            InputHandler.StopCapturingInput();
+
         Destroy(transform.parent.gameObject);
     }
 
     public void SetState(State newState)
     {
-        if (newState != null)
-            Debug.Log("Changing State to " + newState.GetType());
-        else
-            Debug.Log("Resetting state");
-
         CurrentState = newState;
 
         movementHandler.OnArrivedTarget -= DealDamage;
@@ -117,7 +115,6 @@ public class Unit : MonoBehaviour
             return;
 
         Type stateType = CurrentState.GetType();
-        Debug.Log(stateType);
 
         if (stateType == typeof(PositionState))
         {
