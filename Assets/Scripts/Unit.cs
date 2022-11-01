@@ -96,7 +96,10 @@ public class Unit : MonoBehaviour
     void Die()
     {
         if (Team == PlayerManager.PlayerTeam)
+        {
+            CameraController.AllowMovement = false;
             InputHandler.StopCapturingInput();
+        }
 
         Destroy(transform.parent.gameObject);
     }

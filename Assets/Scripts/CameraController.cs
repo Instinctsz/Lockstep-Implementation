@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Nakama;
 
 public class CameraController : MonoBehaviour
 {
@@ -10,17 +11,29 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float maxZoomDist;
 
     private Camera cam;
+
+    public static bool AllowMovement = false;
     // Start is called before the first frame update
     void Start()
     {
         cam = Camera.main;
+        NakamaMatchHandler.MatchStart += OnMatchStart;
+    }
+
+    void OnMatchStart(IMatchState newState)
+    {
+        AllowMovement = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Move();
-        Zoom();
+        if (AllowMovement)
+        {
+            Move();
+            Zoom();
+
+        }
     }
     private void Move()
     {

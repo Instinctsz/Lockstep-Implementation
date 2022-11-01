@@ -40,6 +40,11 @@ public class RollbackHandler : MonoBehaviour
         });
     }
 
+    void SimulateTurn()
+    {
+
+    }
+
     IEnumerator LerpPosition(Unit unit, Vector3 startPosition, Vector3 positionToLerpTo)
     {
         float timeElapsed = 0;
