@@ -76,8 +76,9 @@ const matchLoop: nkruntime.MatchLoopFunction<nkruntime.MatchState> = function (c
         
         // Rollback
         if (tickToQueueTo <= tick) {
+            parsedData.tickToQueueTo = tickToQueueTo;
             logger.error("PACKET ARRIVED FOR TICK: " + tickToQueueTo + ", BUT ITS TICK: " + tick);
-            dispatcher.broadcastMessage(opCodes.Rollback_Request, tickToQueueTo.toString(), null, message.sender);
+            dispatcher.broadcastMessage(opCodes.Rollback_Request, JSON.stringify(parsedData), null, message.sender);
             logger.error("Sent roll back request to tick: " + tickToQueueTo.toString());
             dispatcher.broadcastMessage(message.opCode, message.data, null, message.sender);
             continue;

@@ -9,6 +9,8 @@ public class RollbackHandler : MonoBehaviour
 {
     public float lerpDuration = 0.2f;
 
+    private float turnDurationSeconds = 1 / 10;
+
     void Start()
     {
         NakamaConnection.ClientSocket.ReceivedMatchState += HandleRollback;
@@ -34,15 +36,35 @@ public class RollbackHandler : MonoBehaviour
                 StartCoroutine(LerpRotation(unit, unit.transform.rotation, save.Rotation));
                 unit.ChangeHp(save.Hp);
                 unit.SetState(save.CurrentState);
-                unit.ExecuteCurrentState();
-                //MatchManager.Units[save.Guid].Action = save.CurrentAction;
+                //unit.ExecuteCurrentState()
+            }
+            Debug.Log("Finished processing tick: " + tickToRollbackTo);
+
+            // Catch up
+            int counter = tickToRollbackTo;
+            while (counter <= NakamaServerManager.CurrentTick)
+            {
+                Debug.Log("Simulating tick: " + counter);
+                SimulateTurn(counter);
+                counter++;
             }
         });
     }
 
-    void SimulateTurn()
+    void SimulateTurn(int turn)
     {
+        List<RollbackSave> rollbackSaves = NakamaServerManager.GetRollbackSaves(turn);
 
+        foreach (RollbackSave save in rollbackSaves)
+        {
+            Unit unit = MatchManager.Units[save.Guid];
+
+            if (unit.CurrentState == null) return;
+
+            Debug.Log("Simulating unit movement");
+            unit.movementHandler.ProcessMovementInput(turnDurationSeconds);
+            NakamaServerManager.SetStateOnRollbackSave(turn + 1, unit, unit.CurrentState);
+        }
     }
 
     IEnumerator LerpPosition(Unit unit, Vector3 startPosition, Vector3 positionToLerpTo)

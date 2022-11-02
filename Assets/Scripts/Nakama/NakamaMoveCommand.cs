@@ -34,6 +34,8 @@ public class NakamaMoveCommand : MonoBehaviour
             Debug.Log("reading from player: " + newState.UserPresence.SessionId);
             GameObject unitGo = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
 
+            if (unitGo == null) return;
+
             Debug.Log("Received Move Packet: " + positionToMoveTo + ", for player: " + newState.UserPresence.Username);
             Debug.Log("====================================");
 

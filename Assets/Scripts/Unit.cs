@@ -22,7 +22,7 @@ public class Unit : MonoBehaviour
 
     public State CurrentState;
 
-    private Movement movementHandler;
+    public Movement movementHandler;
 
 
     // Start is called before the first frame update
@@ -40,6 +40,8 @@ public class Unit : MonoBehaviour
 
     public void Attack(Unit unit)
     {
+        if (unit == null) return;
+
         if (Vector3.Distance(unit.transform.position, transform.position) > AttackRange)
         {
             movementHandler.MoveTo(unit, AttackRange);

@@ -25,6 +25,19 @@ public class NakamaServerManager
     {
         return rollbackSaves[tick];
     }
+
+    public static void SetStateOnRollbackSave(int tick, Unit unit, State state)
+    {
+        Debug.Log("Setting " + state + "for tick: " + tick);
+        List<RollbackSave> saves = GetRollbackSaves(tick);
+
+        RollbackSave save = saves.First(rollbacksave => rollbacksave.Guid == unit.guid);
+        saves.Remove(save);
+        save.CurrentState = state;
+
+        saves.Add(save);
+        rollbackSaves[tick] = saves;
+    }
 }
 
 public class RollbackSave

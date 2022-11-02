@@ -21,15 +21,18 @@ public class NakamaAttackCommand : MonoBehaviour
         await NakamaConnection.ClientSocket.SendMatchStateAsync(matchId, Opcodes.Attack, attackState.Serialize(), NakamaMatchHandler.UsersInMatch);
     }
 
-    void HandleAttackCommand(IMatchState newState)
+    public void HandleAttackCommand(IMatchState newState)
     {
         if (newState.OpCode != Opcodes.Attack)
             return;
 
+        Debug.Log("HERER ATTACK!");
         MainThread.Enqueue(() =>
         {
             Unit unitToAttack = AttackState.Deserialize(newState.State);
             GameObject attacker = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
+
+            if (attacker == null) return;
 
             Debug.Log("Received Attack Packet, unit to attack: " + unitToAttack.guid);
             Debug.Log("====================================");

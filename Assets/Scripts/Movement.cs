@@ -23,21 +23,12 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (positionToMoveTo != Vector3.zero)
-        {
-            transform.LookAt(positionToMoveTo);
-            HandleMovement(positionToMoveTo);
-        }
-
-        if (target != null)
-        {
-            transform.LookAt(target.transform.position);
-            HandleMovement(target.transform.position);
-        }
+        ProcessMovementInput(Time.fixedDeltaTime);
     }
 
     public void MoveTo(Vector3 pos, float _stopDistance = 0.001f)
     {
+        Debug.Log("Here?");
         Reset();
         positionToMoveTo = pos;
         stopDistance = _stopDistance;
@@ -51,9 +42,9 @@ public class Movement : MonoBehaviour
     }
 
 
-    void HandleMovement(Vector3 pos)
+    public void HandleMovement(Vector3 pos, float timePassed)
     {
-        float step = MovementSpeed * Time.fixedDeltaTime;
+        float step = MovementSpeed * timePassed;
         transform.position = Vector3.MoveTowards(transform.position, pos, step);
 
         if (Vector3.Distance(transform.position, pos) < stopDistance)
@@ -63,6 +54,21 @@ public class Movement : MonoBehaviour
             else
                 OnArrivedTarget.Invoke(target);
             Reset();
+        }
+    }
+
+    public void ProcessMovementInput(float fixedDeltaTime)
+    {
+        if (positionToMoveTo != Vector3.zero)
+        {
+            transform.LookAt(positionToMoveTo);
+            HandleMovement(positionToMoveTo, fixedDeltaTime);
+        }
+
+        if (target != null)
+        {
+            transform.LookAt(target.transform.position);
+            HandleMovement(target.transform.position, fixedDeltaTime);
         }
     }
 
