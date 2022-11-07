@@ -1,18 +1,18 @@
+using Nakama.TinyJson;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
-public class RollbackState : MonoBehaviour
+public class RollbackState : State
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public int OpCode;
 
-    // Update is called once per frame
-    void Update()
+    public static RollbackState Deserialize(byte[] state)
     {
-        
+        string stateJson = Encoding.UTF8.GetString(state);
+        RollbackState rollbackState = JsonParser.FromJson<RollbackState>(stateJson);
+
+        return rollbackState;
     }
 }

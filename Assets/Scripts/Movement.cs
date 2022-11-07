@@ -28,7 +28,6 @@ public class Movement : MonoBehaviour
 
     public void MoveTo(Vector3 pos, float _stopDistance = 0.001f)
     {
-        Debug.Log("Here?");
         Reset();
         positionToMoveTo = pos;
         stopDistance = _stopDistance;
@@ -46,6 +45,7 @@ public class Movement : MonoBehaviour
     {
         float step = MovementSpeed * timePassed;
         transform.position = Vector3.MoveTowards(transform.position, pos, step);
+        Debug.Log("Moved unit to: " + transform.position);
 
         if (Vector3.Distance(transform.position, pos) < stopDistance)
         {

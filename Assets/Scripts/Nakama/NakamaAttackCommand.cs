@@ -26,21 +26,25 @@ public class NakamaAttackCommand : MonoBehaviour
         if (newState.OpCode != Opcodes.Attack)
             return;
 
-        Debug.Log("HERER ATTACK!");
-        MainThread.Enqueue(() =>
-        {
-            Unit unitToAttack = AttackState.Deserialize(newState.State);
-            GameObject attacker = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
+        if (NakamaHelper.IsMainThread())
+            AttackCommand(newState);
+        else
+            MainThread.Enqueue(() => AttackCommand(newState));
+    }
 
-            if (attacker == null) return;
+    public void AttackCommand(IMatchState newState)
+    {
+        Unit unitToAttack = AttackState.Deserialize(newState.State);
+        GameObject attacker = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
 
-            Debug.Log("Received Attack Packet, unit to attack: " + unitToAttack.guid);
-            Debug.Log("====================================");
+        if (attacker == null) return;
 
-            Unit attackerUnit = attacker.GetComponentInChildren<Unit>();
-            attackerUnit.SetState(new AttackState(unitToAttack));
-            attackerUnit.ExecuteCurrentState();
-        });
+        Debug.Log("Received Attack Packet, unit to attack: " + unitToAttack.guid);
+        Debug.Log("====================================");
+
+        Unit attackerUnit = attacker.GetComponentInChildren<Unit>();
+        attackerUnit.SetState(new AttackState(unitToAttack));
+        attackerUnit.ExecuteCurrentState();
     }
 }
 

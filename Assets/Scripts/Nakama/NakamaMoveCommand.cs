@@ -27,21 +27,26 @@ public class NakamaMoveCommand : MonoBehaviour
     {
         if (newState.OpCode != Opcodes.Position)
             return;
+       
+        if (NakamaHelper.IsMainThread())
+            MoveCommand(newState);
+        else
+            MainThread.Enqueue(() => MoveCommand(newState));
+    }
 
-        MainThread.Enqueue(() =>
-        {
-            Vector3 positionToMoveTo = PositionState.Deserialize(newState.State);
-            Debug.Log("reading from player: " + newState.UserPresence.SessionId);
-            GameObject unitGo = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
+    public void MoveCommand(IMatchState newState)
+    {
+        Vector3 positionToMoveTo = PositionState.Deserialize(newState.State);
+        GameObject unitGo = NakamaMatchHandler.Players[newState.UserPresence.SessionId];
 
-            if (unitGo == null) return;
+        if (unitGo == null) return;
 
-            Debug.Log("Received Move Packet: " + positionToMoveTo + ", for player: " + newState.UserPresence.Username);
-            Debug.Log("====================================");
+        Debug.Log("Received Move Packet: " + positionToMoveTo + ", for player: " + newState.UserPresence.Username);
+        Debug.Log("====================================");
 
-            Unit unit = unitGo.GetComponentInChildren<Unit>();
-            unit.SetState(new PositionState(positionToMoveTo));
-            unit.ExecuteCurrentState();
-        });
+        Unit unit = unitGo.GetComponentInChildren<Unit>();
+        unit.SetState(new PositionState(positionToMoveTo));
+        Debug.Log("Set the state to position state");
+        unit.ExecuteCurrentState();
     }
 }

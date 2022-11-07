@@ -12,10 +12,6 @@ public class ReplayHandler : MonoBehaviour
 {
     [SerializeField] GameObject[] toDisable;
 
-    [SerializeField] NakamaCreateUnitCommand unitCommand;
-    [SerializeField] NakamaMoveCommand moveCommand;
-    [SerializeField] NakamaAttackCommand attackCommand;
-
     List<StorageItem> replayData;
     int currentTurn = 0;
     int offsetReplay = 0;
@@ -48,7 +44,6 @@ public class ReplayHandler : MonoBehaviour
     void TurnPassed()
     {
         currentTurn++;
-        Debug.Log("Current turn: " + currentTurn);
 
         if (replayData.Count == 0) return;
 
@@ -58,22 +53,10 @@ public class ReplayHandler : MonoBehaviour
             StorageItem item = replayData[0];
             foreach (Packet packet in item.value.packets)
             {
-                Debug.Log("Sending packet with opcode: " + packet.opCode);
-                ReplayUserPresence userPresence = new ReplayUserPresence(true, packet.sender.sessionId, packet.sender.username, packet.sender.userId);
-                ReplayMatchState matchState = new ReplayMatchState(match.Id, packet.opCode, Encoding.ASCII.GetBytes(packet.data), userPresence);
+                LockstepUserPresence userPresence = new LockstepUserPresence(true, packet.sender.sessionId, packet.sender.username, packet.sender.userId);
+                LockstepMatchState matchState = new LockstepMatchState(match.Id, packet.opCode, Encoding.ASCII.GetBytes(packet.data), userPresence);
 
-                if (packet.opCode == Opcodes.Create_Unit)
-                {
-                    NakamaMatchHandler.UsersInMatch.Add(userPresence);
-                    unitCommand.HandleCreateUnitCommand(matchState);
-                }
-                if (packet.opCode == Opcodes.Position)
-                    moveCommand.HandleMoveCommand(matchState);
-                if (packet.opCode == Opcodes.Attack)
-                {
-                    Debug.Log("Received attack command from : " + packet.sender.username);
-                    attackCommand.HandleAttackCommand(matchState);
-                }
+                NakamaHelper.SendCommandFromMatchstate(matchState);
             }
             replayData.RemoveAt(0);
         }
@@ -81,44 +64,5 @@ public class ReplayHandler : MonoBehaviour
     }
 }
 
-class ReplayMatchState : IMatchState
-{
-    public string MatchId { get; set; }
 
-    public long OpCode { get; set; }
-
-    public byte[] State { get; set; }
-
-    public IUserPresence UserPresence { get; set; }
-
-    public ReplayMatchState(string matchId, long opcode, byte[] state, IUserPresence userPresence)
-    {
-        MatchId = matchId;
-        OpCode = opcode;
-        State = state;
-        UserPresence = userPresence;
-    }
-}
-
-class ReplayUserPresence : IUserPresence
-{
-    public bool Persistence { get; set; }
-
-    public string SessionId { get; set; }
-
-    public string Status { get; set; }
-
-    public string Username { get; set; }
-
-    public string UserId { get; set; }
-
-    public ReplayUserPresence(bool persistance, string sessionId, string username, string userId, string status = "")
-    {
-        Persistence = persistance;
-        SessionId = sessionId;
-        Username = username;
-        UserId = userId;
-        Status = status;
-    }
-}
 

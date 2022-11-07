@@ -31,26 +31,28 @@ public class NakamaCreateUnitCommand : MonoBehaviour
         if (newState.OpCode != Opcodes.Create_Unit)
             return;
 
-        MainThread.Enqueue(() =>
-        {
-            CreateUnitState createUnitState = CreateUnitState.Deserialize(newState.State);
+        if (NakamaHelper.IsMainThread())
+            CreateUnitCommand(newState);
+        else
+            MainThread.Enqueue(() => CreateUnitCommand(newState));
+    }
 
-            GameObject go = Instantiate(unitPrefab);
-            go.transform.position = createUnitState.GetPosition();
+    void CreateUnitCommand(IMatchState newState)
+    {
+        CreateUnitState createUnitState = CreateUnitState.Deserialize(newState.State);
 
-            Unit unit = go.GetComponentInChildren<Unit>();
-            unit.Team = (Team)createUnitState.Team;
-            unit.guid = createUnitState.GUID;
-            go.GetComponentInChildren<UnitUI>().SetName(NakamaMatchHandler.FindUserBySession(newState.UserPresence.SessionId).Username);
+        GameObject go = Instantiate(unitPrefab);
 
+        Unit unit = go.GetComponentInChildren<Unit>();
+        unit.transform.position = createUnitState.GetPosition();
+        unit.Team = (Team)createUnitState.Team;
+        unit.guid = createUnitState.GUID;
+        go.GetComponentInChildren<UnitUI>().SetName(NakamaMatchHandler.FindUserBySession(newState.UserPresence.SessionId).Username);
 
+        Debug.Log("Received Create Unit Packet: " + createUnitState.Serialize());
+        Debug.Log("====================================");
 
-            Debug.Log("Received Create Unit Packet: " + createUnitState.Serialize());
-            Debug.Log("====================================");
-
-            Debug.Log("adding player: " + newState.UserPresence.SessionId);
-            NakamaMatchHandler.Players.Add(newState.UserPresence.SessionId, go);
-            UnitCreated.Invoke(unit);
-        });
+        NakamaMatchHandler.Players.Add(newState.UserPresence.SessionId, go);
+        UnitCreated.Invoke(unit);
     }
 }
